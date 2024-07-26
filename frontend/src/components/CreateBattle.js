@@ -1,108 +1,121 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { VStack, Heading, Button, Input, useToast, Container } from '@chakra-ui/react';
-import { useWallet } from '../WalletContext';
+import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { useWallet } from "../WalletContext";
+import CustomButton from "./CustomButton";
+import CustomInput from "./CustomInput";
+import styles from "../styles";
 
-function CreateBattle() {
-  const { account, contract } = useWallet();
-  const [battleId, setBattleId] = useState('');
-  const [playerCardId, setPlayerCardId] = useState('');
-  const [computerCardId, setComputerCardId] = useState('');
-  const [playerStatValue, setPlayerStatValue] = useState('');
-  const [computerStatValue, setComputerStatValue] = useState('');
+const CreateBattle = () => {
+  const { contract, account } = useWallet(); // Get contract and account from WalletContext
+  const [battleName, setBattleName] = useState("");
   const [waitBattle, setWaitBattle] = useState(false);
-  const toast = useToast();
+  const [playerCardId, setPlayerCardId] = useState(0);
+  const [computerCardId, setComputerCardId] = useState(0);
+  const [playerStatValue, setPlayerStatValue] = useState(0);
+  const [computerStatValue, setComputerStatValue] = useState(0);
+  const [errorMessage, setErrorMessage] = useState("");
   const navigate = useNavigate();
 
+  useEffect(() => {
+    // Redirect to battle page if an active battle is found
+    const fetchActiveBattle = async () => {
+      if (contract) {
+        try {
+          const battles = await contract.getAllBattles(); // Replace with your method to get battles
+          const activeBattle = battles.find(
+            (battle) => battle.players.includes(account.toLowerCase()) && battle.battleStatus === 0
+          );
+          if (activeBattle) {
+            navigate(`/battle/${activeBattle.battleName}`);
+            setWaitBattle(true);
+          }
+        } catch (error) {
+          console.error("Error fetching active battles:", error);
+        }
+      }
+    };
+    fetchActiveBattle();
+  }, [contract, account, navigate]);
+
   const handleClick = async () => {
-    if (!battleId || !playerCardId || !computerCardId || !playerStatValue || !computerStatValue) {
-      toast({
-        title: 'Error',
-        description: 'All fields must be filled out',
-        status: 'error',
-        duration: 3000,
-        isClosable: true,
-      });
+    if (!battleName || !battleName.trim()) {
+      setErrorMessage("Battle name cannot be empty");
       return;
     }
 
+    // Generate a unique battle ID
+    const uniqueBattleId = Date.now(); // Simple method for generating unique IDs
+
     try {
-      const battleIdNum = parseInt(battleId);
-      const playerCardIdNum = parseInt(playerCardId);
-      const computerCardIdNum = parseInt(computerCardId);
-      const playerStatValueNum = parseInt(playerStatValue);
-      const computerStatValueNum = parseInt(computerStatValue);
-
-      const tx = await contract.createBattle(
-        battleIdNum,
-        playerCardIdNum,
-        computerCardIdNum,
-        playerStatValueNum,
-        computerStatValueNum,
-        { gasLimit: 200000 }
-      );
-      await tx.wait();
-      setWaitBattle(true);
-
-      toast({
-        title: 'Battle Created',
-        description: `Battle with ID ${battleIdNum} created successfully`,
-        status: 'success',
-        duration: 3000,
-        isClosable: true,
-      });
-
-      navigate(`/battle/${battleIdNum}`);
+      if (contract) {
+        const tx = await contract.createBattle(
+          uniqueBattleId,
+          playerCardId,
+          computerCardId,
+          playerStatValue,
+          computerStatValue,
+          { gasLimit: 200000 }
+        );
+        await tx.wait(); // Wait for transaction to be mined
+        setWaitBattle(true);
+      } else {
+        setErrorMessage("Contract is not initialized.");
+      }
     } catch (error) {
-      toast({
-        title: 'Error',
-        description: error.message,
-        status: 'error',
-        duration: 3000,
-        isClosable: true,
-      });
+      setErrorMessage(error.message);
     }
   };
 
   return (
     <>
-      {waitBattle && <div>Loading...</div>}
-      <Container>
-        <VStack spacing={4} mt={8} textAlign="center">
-          <Heading as="h2" size="md">Create a New Battle</Heading>
-          <Input
-            placeholder="Enter Battle ID"
-            value={battleId}
-            onChange={(e) => setBattleId(e.target.value)}
-          />
-          <Input
-            placeholder="Enter Player Card ID"
-            value={playerCardId}
-            onChange={(e) => setPlayerCardId(e.target.value)}
-          />
-          <Input
-            placeholder="Enter Computer Card ID"
-            value={computerCardId}
-            onChange={(e) => setComputerCardId(e.target.value)}
-          />
-          <Input
-            placeholder="Enter Player Stat Value"
-            value={playerStatValue}
-            onChange={(e) => setPlayerStatValue(e.target.value)}
-          />
-          <Input
-            placeholder="Enter Computer Stat Value"
-            value={computerStatValue}
-            onChange={(e) => setComputerStatValue(e.target.value)}
-          />
-          <Button colorScheme="blue" onClick={handleClick}>Create Battle</Button>
-          <Button variant="link" onClick={() => navigate('/join-battle')}>
-            Or join an existing Battle
-          </Button>
-        </VStack>
-      </Container>
+      <div className="flex flex-col mb-5">
+        <CustomInput
+          label="Battle Name"
+          placeholder="Enter battle name"
+          value={battleName}
+          handleValueChange={setBattleName}
+        />
+        <CustomInput
+          label="Player Card ID"
+          placeholder="Enter player card ID"
+          value={playerCardId}
+          handleValueChange={(value) => setPlayerCardId(Number(value))}
+        />
+        <CustomInput
+          label="Computer Card ID"
+          placeholder="Enter computer card ID"
+          value={computerCardId}
+          handleValueChange={(value) => setComputerCardId(Number(value))}
+        />
+        <CustomInput
+          label="Player Stat Value"
+          placeholder="Enter player stat value"
+          value={playerStatValue}
+          handleValueChange={(value) => setPlayerStatValue(Number(value))}
+        />
+        <CustomInput
+          label="Computer Stat Value"
+          placeholder="Enter computer stat value"
+          value={computerStatValue}
+          handleValueChange={(value) => setComputerStatValue(Number(value))}
+        />
+        <CustomButton
+          title="Create Battle"
+          handleClick={handleClick}
+          restStyles="mt-6"
+        />
+        {errorMessage && <p className={styles.errorText}>{errorMessage}</p>}
+      </div>
+      <p
+        className={styles.infoText}
+        onClick={() => {
+          navigate("/join-battle");
+        }}
+      >
+        Or join an already existing Battle
+      </p>
     </>
   );
-}
+};
 
 export default CreateBattle;

@@ -45,6 +45,7 @@ function Home() {
   };
 
   const handleRegister = async () => {
+    console.log("handleRegister")
     if (name.trim() === '') {
       toast({
         title: 'Registration Failed',
@@ -78,9 +79,10 @@ function Home() {
         duration: 3000,
         isClosable: true,
       });
-
+      console.log("Player Registered")
+      console.log(name)
       // Navigate to createBattle page
-      navigate('/createBattle');
+      navigate('/create-battle');
     } catch (error) {
       toast({
         title: 'Registration Failed',
