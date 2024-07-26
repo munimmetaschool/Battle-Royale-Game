@@ -1,0 +1,27 @@
+require("@nomicfoundation/hardhat-toolbox");
+const dotenv = require("dotenv");
+dotenv.config();
+
+function privateKey() {
+  return process.env.PRIVATE_KEY !== undefined ? [process.env.PRIVATE_KEY] : [];
+}
+
+module.exports = {
+  networks: {
+    core_testnet: {
+      url: "https://rpc.test.btcs.network",
+      accounts: privateKey(),
+      chainId: 1115,
+    },
+  },
+  solidity: {
+    version: "0.8.24",
+    settings: {
+      evmVersion: "paris",
+      optimizer: {
+        enabled: true,
+        runs: 1000,
+      },
+    },
+  },
+};
