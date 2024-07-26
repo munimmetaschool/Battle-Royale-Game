@@ -98,7 +98,7 @@ function Home() {
         <Flex align="center" justify="space-between" padding="1.5rem" bg="white" color="gray.600" boxShadow="sm">
           <Flex align="center" mr={5}>
             <Heading as="h1" size="lg" letterSpacing={'-.1rem'} color="purple.600" onClick={navigateHome} cursor="pointer" _hover={{ color: "purple.500" }}>
-              Core NFT Minter
+              Battle Royale
             </Heading>
           </Flex>
           <Box>
