@@ -1,4 +1,4 @@
-// import React, { useState, useEffect } from "react";
+
 // import { useNavigate } from "react-router-dom";
 // import { useWallet } from "../WalletContext";
 // import FetchNFT from "../components/FetchNFT";
@@ -127,8 +127,9 @@ import { useNavigate } from "react-router-dom";
 
 import styles from "../styles";
 
-import { useGlobalContext } from "../context";
+import { useGlobalContext } from '../context/WalletContext';
 import { PageHOC, CustomButton, CustomInput, GameLoad } from "../components";
+
 const CreateBattle = () => {
   const { contract, battleName, setBattleName, gameData, setErrorMessage } =
     useGlobalContext();
