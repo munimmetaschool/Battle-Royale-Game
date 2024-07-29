@@ -11,7 +11,7 @@ import { useNavigate } from "react-router-dom";
 
 import { ethers } from "ethers";
 
-import Web3Modal from "web3modal";
+// import Web3Modal from "web3modal";
 import { createEventListener } from "./createEventListener";
 import { GetParams } from "../utils/onboard";
 
@@ -160,31 +160,31 @@ export const GlobalContextProvider = ({ children }) => {
     }
   }, [contract, step]);
 
-  useEffect(() => {
-    const fetchGameData = async () => {
-      const fetchedBattles = await contract.getAllBattles();
-      console.log(fetchedBattles);
-      const pendingBattles = fetchedBattles.filter(
-        (battle) => battle.battleStatus === 0
-      );
-      let activeBattle = null;
+  // useEffect(() => {
+  //   const fetchGameData = async () => {
+  //     const fetchedBattles = await contract.getAllBattles();
+  //     console.log(fetchedBattles);
+  //     const pendingBattles = fetchedBattles.filter(
+  //       (battle) => battle.battleStatus === 0
+  //     );
+  //     let activeBattle = null;
 
-      fetchedBattles.forEach((battle) => {
-        if (
-          battle.players.find(
-            (player) => player.toLowerCase() === walletAddress.toLowerCase()
-          )
-        ) {
-          if (battle.winner.startsWith("0x00")) {
-            activeBattle = battle;
-          }
-        }
-      });
-      setGameData({ pendingBattles: pendingBattles.slice(1), activeBattle });
-    };
+  //     fetchedBattles.forEach((battle) => {
+  //       if (
+  //         battle.players.find(
+  //           (player) => player.toLowerCase() === walletAddress.toLowerCase()
+  //         )
+  //       ) {
+  //         if (battle.winner.startsWith("0x00")) {
+  //           activeBattle = battle;
+  //         }
+  //       }
+  //     });
+  //     setGameData({ pendingBattles: pendingBattles.slice(1), activeBattle });
+  //   };
 
-    if (contract) fetchGameData();
-  }, [contract, updateGameData]);
+  //   if (contract) fetchGameData();
+  // }, [contract, updateGameData]);
 
   useEffect(() => {
     if (showAlert?.status) {

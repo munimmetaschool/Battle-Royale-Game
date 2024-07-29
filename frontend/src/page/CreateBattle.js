@@ -1,4 +1,3 @@
-
 // import { useNavigate } from "react-router-dom";
 // import { useWallet } from "../WalletContext";
 // import FetchNFT from "../components/FetchNFT";
@@ -127,8 +126,11 @@ import { useNavigate } from "react-router-dom";
 
 import styles from "../styles";
 
-import { useGlobalContext } from '../context/WalletContext';
-import { PageHOC, CustomButton, CustomInput, GameLoad } from "../components";
+import { useGlobalContext } from "../context/WalletContext";
+import PageHOC from "../components/PageHOC";
+import CustomButton from "../components/CustomButton";
+import CustomInput from "../components/CustomInput";
+import GameLoad from "../components/GameLoad";
 
 const CreateBattle = () => {
   const { contract, battleName, setBattleName, gameData, setErrorMessage } =
@@ -192,4 +194,3 @@ export default PageHOC(
   </>,
   <>Create your own battle and wait for other players to join</>
 );
-

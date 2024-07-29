@@ -2,7 +2,7 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import { logo, heroImg } from "../assets";
 import styles from "../styles";
-import { useGlobalContext } from "../context";
+import { useGlobalContext } from "../context/WalletContext";
 import Alert from "./Alert";
 //higher order components take a component as a first argument and act as a wrapper
 const PageHOC = (Component, title, description) => () => {
